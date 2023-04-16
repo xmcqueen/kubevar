@@ -14,6 +14,7 @@ func main() {
 
 	kubeconfig := kubevar.Kubeconfig{}
 
+	labelSelector := flag.String("l", "kubernetes.io/cluster-service=true", "labelSelector for the ListOptions for the API call")
 	flag.Var(&kubeconfig, "kubeconfig", "specify the path to the kubeconfig")
 
 	flag.Parse()
@@ -25,10 +26,10 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Config:%v", kubeconfig.String())
+	fmt.Printf("Kubeconfig: %v\n", kubeconfig.String())
 
 	// get the cluster-info
-	svcs, err := kubeconfig.Clientset.CoreV1().Services("").List(context.TODO(), metav1.ListOptions{})
+	svcs, err := kubeconfig.Clientset.CoreV1().Services("").List(context.TODO(), metav1.ListOptions{LabelSelector: *labelSelector})
 	if err != nil {
 		panic(err)
 	}
